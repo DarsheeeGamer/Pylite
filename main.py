@@ -1,7 +1,7 @@
 
 import sys
-from pylite.interpreter import Interpreter
-from pylite.parser import Parser
+from interpreter import Interpreter
+from parser import Parser
 
 def main():
     if len(sys.argv) > 1:
