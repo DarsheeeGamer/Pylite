@@ -161,10 +161,10 @@ PyLite is a simplified programming language inspired by Python, designed for lea
 ### 7. Attribute Access
 *   You can access attributes or call methods of imported modules or class instances using the `.` operator.
 
-   ```pylite
+   
    import mymodule.py
    mymodule.my_class_instance.my_method("hello")
-    ```
+    
 ## Limitations
 
 *   PyLite is a simplified language with fewer features than Python.
