@@ -1,7 +1,7 @@
 # pylite/parser.py
-
 from lexer import Token, PyLiteLexer
 class ASTNode:
+    __slots__ = ('type', 'value', 'children')
     def __init__(self, type, value=None, children=None):
         self.type = type
         self.value = value
@@ -15,16 +15,20 @@ class PyLiteParser:
     def __init__(self, tokens):
         self.tokens = tokens
         self.pos = 0
+        self.functions = {}
+        self.tokens_len = len(tokens)
 
     def parse(self):
         statements = []
-        while self.peek().type != "EOF":
-           statements.append(self.parse_statement())
+        while self.pos < self.tokens_len and self.peek().type != "EOF":
+            if self.peek().type == "KEYWORD" and self.peek().value == "def":
+                statements.append(self.parse_function_definition())
+            else:
+               statements.append(self.parse_statement())
         return statements
 
-
     def peek(self, offset=0):
-        if self.pos + offset < len(self.tokens):
+        if self.pos + offset < self.tokens_len:
             return self.tokens[self.pos + offset]
         return Token("EOF", None)
 
@@ -47,6 +51,24 @@ class PyLiteParser:
                 raise Exception(f"Expected {type}, got {self.peek()}")
          return token
 
+    def parse_function_definition(self):
+        self.require("KEYWORD", "def")
+        name = self.require("IDENTIFIER").value
+        self.require("OPERATOR", "(")
+        params = []
+        while self.peek().type == "IDENTIFIER":
+            params.append(self.require("IDENTIFIER").value)
+            if not self.match("OPERATOR", ","):
+                break
+        self.require("OPERATOR", ")")
+        self.require("OPERATOR", ":")
+
+        body = []
+        while self.peek().type != "EOF" and self.peek(0).type != "NEWLINE" and not (self.peek().type == "KEYWORD" and self.peek().value == "def"):
+           body.append(self.parse_statement())
+        return ASTNode("FUNCTION_DEFINITION", value=name, children = [params, *body])
+
+
     def parse_statement(self):
          if self.match("KEYWORD", "if"):
               return self.parse_if_statement()
@@ -54,6 +76,8 @@ class PyLiteParser:
               return self.parse_while_statement()
          if self.match("KEYWORD", "print"):
               return self.parse_print_statement()
+         if self.match("KEYWORD", "return"):
+              return self.parse_return_statement()
          return self.parse_assignment()
 
     def parse_if_statement(self):
@@ -102,9 +126,20 @@ class PyLiteParser:
 
     def parse_print_statement(self):
          self.require("OPERATOR", "(")
-         expression = self.parse_expression()
+         expressions = []
+         if self.peek().type != "OPERATOR" or self.peek().value != ')':
+             expressions.append(self.parse_expression())
+             while self.match("OPERATOR", ","):
+                 expressions.append(self.parse_expression())
          self.require("OPERATOR", ")")
-         return ASTNode("PRINT_STATEMENT", children=[expression])
+         return ASTNode("PRINT_STATEMENT", children=expressions)
+
+    def parse_return_statement(self):
+         expression = None
+         if self.peek().type != "NEWLINE":
+             expression = self.parse_expression()
+         return ASTNode("RETURN_STATEMENT", children=[expression])
+
 
     def parse_assignment(self):
          if self.peek(1).value == "=":
@@ -115,7 +150,21 @@ class PyLiteParser:
          return self.parse_expression()
 
     def parse_expression(self):
-         return self.parse_or_expression()
+        return self.parse_call_expression()
+
+
+    def parse_call_expression(self):
+         left = self.parse_or_expression()
+         if self.peek().type == "OPERATOR" and self.peek().value == "(":
+            self.consume()
+            args = []
+            if self.peek().type != "OPERATOR" or self.peek().value != ")":
+                args.append(self.parse_expression())
+                while self.match("OPERATOR", ","):
+                    args.append(self.parse_expression())
+            self.require("OPERATOR", ")")
+            return ASTNode("CALL_EXPRESSION", children = [left, *args])
+         return left
 
     def parse_or_expression(self):
         left = self.parse_and_expression()
