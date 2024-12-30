@@ -6,7 +6,7 @@
 
 ## Introduction
 
-PyLite is a simplified programming language inspired by Python. It is implemented using Python itself and is designed to be a minimal yet functional language interpreter. PyLite aims to demonstrate the core concepts of lexing, parsing, and interpretation without the complexities of a full-fledged language.
+PyLite is a simplified programming language inspired by Python. It is implemented using Python itself and is designed to be a minimal yet functional language interpreter. PyLite aims to demonstrate the core concepts of lexing, parsing, and interpretation without the complexities of a full-fledged language. Pylite has two variants, one coded in python and the other coded in C++.
 
 This project provides a command-line interface (CLI) that can execute .pylite files or interpret code interactively.
 
