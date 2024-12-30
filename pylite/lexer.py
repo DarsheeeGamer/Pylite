@@ -1,12 +1,11 @@
 # pylite/lexer.py
-
 import re
 
 class Token:
+    __slots__ = ('type', 'value')
     def __init__(self, type, value):
         self.type = type
         self.value = value
-
     def __repr__(self):
         return f"Token({self.type}, {self.value})"
 
@@ -15,16 +14,17 @@ class PyLiteLexer:
         self.source_code = source_code
         self.pos = 0
         self.tokens = []
+        self.source_len = len(source_code)
 
     def tokenize(self):
-        while self.pos < len(self.source_code):
+        while self.pos < self.source_len:
             char = self.source_code[self.pos]
 
             if char.isspace():
                 self.pos += 1
                 continue
             elif char == '#':
-                 while self.pos < len(self.source_code) and self.source_code[self.pos] != '\n':
+                 while self.pos < self.source_len and self.source_code[self.pos] != '\n':
                      self.pos+=1
                  self.pos+=1
                  continue
@@ -32,9 +32,9 @@ class PyLiteLexer:
                 self.tokens.append(self.tokenize_number())
             elif char.isalpha():
                  self.tokens.append(self.tokenize_identifier())
-            elif char == '"':
-                 self.tokens.append(self.tokenize_string())
-            elif char in "+-*/%()=<>!":
+            elif char == '"' or char == "'":
+                 self.tokens.append(self.tokenize_string(char))
+            elif char in "+-*/%()=<>!:,;.":
                 self.tokens.append(self.tokenize_operator())
             elif char == '\n':
                 self.tokens.append(Token("NEWLINE", "\n"))
@@ -46,14 +46,14 @@ class PyLiteLexer:
         return self.tokens
 
     def peek(self, offset):
-       if self.pos + offset < len(self.source_code):
+       if self.pos + offset < self.source_len:
          return self.source_code[self.pos+offset]
        return None
 
     def tokenize_number(self):
           start_pos = self.pos
           decimal_point = False
-          while self.pos < len(self.source_code) and (self.source_code[self.pos].isdigit() or self.source_code[self.pos] == '.' or self.source_code[self.pos] == '-'):
+          while self.pos < self.source_len and (self.source_code[self.pos].isdigit() or self.source_code[self.pos] == '.' or self.source_code[self.pos] == '-'):
               if self.source_code[self.pos] == '.':
                   if decimal_point:
                       raise ValueError(f"Invalid number at position {start_pos}")
@@ -69,20 +69,20 @@ class PyLiteLexer:
 
     def tokenize_identifier(self):
           start_pos = self.pos
-          while self.pos < len(self.source_code) and (self.source_code[self.pos].isalnum() or self.source_code[self.pos] == '_'):
+          while self.pos < self.source_len and (self.source_code[self.pos].isalnum() or self.source_code[self.pos] == '_'):
              self.pos += 1
           value = self.source_code[start_pos:self.pos]
-          if value in ("if", "elif", "else", "while", "print", "and", "or", "not", "True", "False"):
+          if value in ("if", "elif", "else", "while", "print", "and", "or", "not", "True", "False", "len", "int", "float", "str", "input", "def", "return"):
               return Token("KEYWORD", value)
           else:
               return Token("IDENTIFIER", value)
 
-    def tokenize_string(self):
+    def tokenize_string(self, quote_char):
         self.pos+=1
         start_pos = self.pos
-        while self.pos < len(self.source_code) and self.source_code[self.pos] != '"':
+        while self.pos < self.source_len and self.source_code[self.pos] != quote_char:
             self.pos += 1
-        if self.pos == len(self.source_code):
+        if self.pos == self.source_len:
             raise ValueError(f"Unterminated String at position {start_pos}")
         value = self.source_code[start_pos:self.pos]
         self.pos+=1
@@ -117,6 +117,9 @@ class PyLiteLexer:
              else:
                  self.pos+=1
                  return Token("OPERATOR", ">")
+        elif char in [':', ';', ',', '.']:
+             self.pos += 1
+             return Token("OPERATOR", char)
         else:
             self.pos +=1
             return Token("OPERATOR", char)
