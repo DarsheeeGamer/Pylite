@@ -1,0 +1,44 @@
+# This is a sample PyLite program
+
+x = 10
+y = 20
+sum_result = x + y
+print("The sum of x and y is:" sum_result)
+
+message = "Hello, PyLite!"
+print(message)
+
+if (x < 15):
+  print("x is less than 15")
+elif (x > 15):
+    print("x is greater than 15")
+else:
+  print("x is equal to 15")
+
+count = 0
+while (count < 5):
+    print("Count:" count)
+    count = count + 1
+
+is_active = True
+if (not is_active):
+    print("Not active")
+else:
+    print("Is Active")
+
+
+a = 5
+b = 2
+print(a / b)     # Division (float result)
+print(a // b)    # Floor division (integer result)
+print(a % b)     # Modulo
+print(a ** b)    # Exponentiation
+
+c = 10.5
+print(c)
+
+is_valid = (a > 2) and (b < 3)
+print(is_valid)
+
+is_valid2 = (a > 10) or (b == 2)
+print(is_valid2)
