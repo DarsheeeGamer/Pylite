@@ -1,180 +1,107 @@
-# PyLite Programming Language
+# PyLite: A Simplified Python-like Language Interpreter
 
-PyLite is a simplified programming language inspired by Python, designed for learning and experimentation. It aims to provide a subset of core Python functionalities with a more straightforward syntax.
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
+**GitHub Repository:** [https://github.com/DarsheeeGamer/Pylite/](https://github.com/DarsheeeGamer/Pylite/)
+
+## Introduction
+
+PyLite is a simplified programming language inspired by Python. It is implemented using Python itself and is designed to be a minimal yet functional language interpreter. PyLite aims to demonstrate the core concepts of lexing, parsing, and interpretation without the complexities of a full-fledged language.
+
+This project provides a command-line interface (CLI) that can execute .pylite files or interpret code interactively.
 
 ## Features
 
-*   **Simplified Syntax:**  Aims for easier-to-learn keywords and structure.
-*   **Implicit Typing:** No need to declare variable types explicitly.
-*   **Basic Data Types:** Supports integers, floats, strings, lists, dictionaries and tuples.
-*   **Control Flow:** Includes `if/else/endif`, `for/endfor`, and `while/endwhile` statements.
-*   **Functions:**  Supports function definitions with `fun`, parameters, and return values.
-*   **Classes:** Supports class definitions with `class`, methods and properties.
-*    **Exception Handling:**  Supports basic exception handling with `try/except/endtry`
-*   **Importing:** Allows importing other `.py` files and provides limited support for importing python packages.
-*   **Basic I/O:** Includes a `print` function for output.
-*   **Python Interop:** When a python module is imported, you can call their functions and access their attributes using python reflection.
+*   **Basic Data Types:** Integers, Floats, Strings, Booleans
+*   **Dynamic Typing:** Like Python, variables don't need explicit type declarations.
+*   **Arithmetic Operators:** `+`, `-`, `*`, `/`, `//`, `%`, `**`
+*   **Comparison Operators:** `==`, `!=`, `>`, `<`, `>=`, `<=`
+*   **Logical Operators:** `and`, `or`, `not`
+*   **Conditional Statements:** `if`, `elif`, `else`
+*   **Looping:** `while`
+*   **Basic Input/Output:** `print()` for output
+*   **Comments:** `#` for single-line comments
+*   **File Execution:** Can run `.pylite` files from the command line
+*   **Interactive Mode:** REPL (Read-Eval-Print Loop) for interactive code execution
 
-## Getting Started
+## Usage
 
-### Prerequisites
+### Running from CLI
 
-*   Python 3.6 or higher
-*   You will need to have created a directory named `pylite` and the following files inside it:
-    *  `pylite/lexer.py`
-    *  `pylite/parser.py`
-    *  `pylite/interpreter.py`
-    *  `pylite/main.py`
-  
+1.  **Clone the Repository:**
 
-### Running PyLite
-
-1.  **Clone the repository:**
     ```bash
-    cd ~/projects
     git clone https://github.com/DarsheeeGamer/Pylite.git
+    cd Pylite
     ```
 
-2.  **Navigate to the `pylite` directory:**
+2.  **Execute a .pylite file:**
 
-   ```bash
-   # Assuming the `pylite` directory is located in the same location
-   cd pylite
-   ```
+    ```bash
+    python pylite/main.py my_script.pylite
+    ```
+    or if main.py is made executable
 
-3.  **Run PyLite with a file or interactively:**
-    *   **Run a file:**
-        ```bash
-        python main.py my_program.pylite
-        ```
-        (assuming you have a file named `my_program.pylite`).
-    *   **Interactive mode:**
-        ```bash
-        python main.py
-        ```
-        Type your PyLite code line by line. Type `exit` to quit.
+    ```bash
+    ./pylite/main.py my_script.pylite
+    ```
+    (Replace `my_script.pylite` with the path to your PyLite script file.)
+    - Note: Only .pylite files will be executed
 
-## Language Syntax
+3. **Interactive Mode**
+    ```bash
+    python pylite/main.py
+    ```
+    or if main.py is made executable
 
-### 1. Variables
-
-*   Variables are dynamically typed and assigned using the `=` operator.
-
-    ```pylite
-    name = "Alice"
-    age = 30
-    pi = 3.14
-    numbers = [1, 2, 3, 4]
-    person = {"name": "Bob", "age": 25}
-    point = (1,2)
+    ```bash
+    ./pylite/main.py
     ```
 
-### 2. Control Flow
+    This will launch a command-line interpreter where you can enter and run PyLite code line by line. To exit the interpreter type `exit()`.
+### Example Pylite code `example.pylite`
+```
+x = 10
+y = 20
+print(x + y)
+z = "Hello, Pylite!"
+print(z)
+if (x < 15):
+  print("x is less than 15")
+elif (x > 15):
+  print("x is greater than 15")
+else:
+  print("x is equal to 15")
+count = 0
+while (count < 3):
+  print(count)
+  count = count + 1
+b = True
+if (not b):
+  print("b is not True")
+else:
+  print ("b is True")
+```
+## Project Structure
 
-*   **`if/else` statements:**
+*   `lexer.py`: Contains the PyLiteLexer class responsible for tokenizing the source code.
+*   `parser.py`: Contains the PyLiteParser class that generates the Abstract Syntax Tree (AST) from tokens.
+*   `interpreter.py`: Contains the PyLiteInterpreter class, responsible for executing the AST and managing program state.
+*   `main.py`: Entry point of the interpreter. Handles command line argument processing and the REPL loop.
 
-    ```pylite
-    age = 25
-    if age > 20:
-        print("You're an adult")
-    else:
-        print("You're not an adult")
-    endif
-    ```
-*   **`for` loops:**
+## Development Notes
 
-    ```pylite
-    numbers = [1, 2, 3, 4, 5]
-    for n in numbers:
-        print(n)
-    endfor
+This project is intended to be a learning tool for understanding the following concepts:
 
-    for i in range(1, 5):
-        print(i)
-    endfor
-    ```
-*   **`while` loops:**
+*   **Lexing:** Converting raw code into a stream of tokens.
+*   **Parsing:** Organizing tokens into an AST that represents the structure of the code.
+*   **Interpretation:** Traversing the AST and executing the program.
 
-    ```pylite
-    i = 0
-    while i < 3:
-      print(i)
-      i = i + 1
-    endwhile
-    ```
+### Possible Future Enhancements
 
-### 3. Functions
-
-*   Use the `fun` keyword to define functions.
-
-    ```pylite
-    fun add(x, y):
-      result = x + y
-      return result
-    endfun
-    z = add(5, 3)
-    print(z)
-    ```
-
-### 4. Classes
-
-*  Use the `class` keyword to define classes.
-
-    ```pylite
-    class Person:
-      name = "default"
-      fun __init__(self, name):
-        self.name = name
-      endfun
-      fun say_name(self, extra):
-          print(self.name + extra)
-      endfun
-    endclass
-    p = Person("alice")
-    p.say_name("!")
-    ```
-
-### 5. Exception Handling
-
-*   Use `try/except` blocks to handle exceptions.
-
-    ```pylite
-     try:
-         x = 1 / 0
-     except:
-       print("Zero division error")
-     endtry
-    ```
-
-### 6. Import Statements
-
-*   Use the `import` keyword to import code from other `.py` files or python packages
-
-     ```pylite
-        import mymodule.py
-        print(mymodule.my_var)
-
-        import sys
-        print(sys.version)
-     ```
-
-### 7. Attribute Access
-*   You can access attributes or call methods of imported modules or class instances using the `.` operator.
-
-   
-   import mymodule.py
-   mymodule.my_class_instance.my_method("hello")
-    
-## Limitations
-
-*   PyLite is a simplified language with fewer features than Python.
-*   It does not support all of Python's syntax.
-*   The translator is limited and can't translate all python code to pylite
-*   Error messages are very basic.
-*   No nesting of control flow statement is supported
-*   The interpreter is not optimized for performance
-*   Object-oriented programming is supported in a basic way
-
-## Contributing
-
-Contributions are welcome! If you'd like to help improve PyLite, please feel free to fork this project and submit pull requests.
+*   Add support for functions.
+*   Implement proper scope management for variables.
+*   Include data structures like lists or dictionaries.
+*   Introduce more operators.
+*   Improve error reporting and handling.
+*   Allow for Multi-line comments.
