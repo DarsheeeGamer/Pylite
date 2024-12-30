@@ -89,14 +89,6 @@ else:
 *   `interpreter.py`: Contains the PyLiteInterpreter class, responsible for executing the AST and managing program state.
 *   `main.py`: Entry point of the interpreter. Handles command line argument processing and the REPL loop.
 
-## Development Notes
-
-This project is intended to be a learning tool for understanding the following concepts:
-
-*   **Lexing:** Converting raw code into a stream of tokens.
-*   **Parsing:** Organizing tokens into an AST that represents the structure of the code.
-*   **Interpretation:** Traversing the AST and executing the program.
-
 ### Possible Future Enhancements
 
 *   Add support for functions.
